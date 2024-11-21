@@ -1,0 +1,651 @@
+<html><head><base href="/">
+    <title>Contatos CSV</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="assets\images\favicon\csv.svg">
+    <link rel="alternate icon" href="assets\images\favicon\csv.svg" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #FF3545; /* New primary red color */
+            --primary-dark: #e62e3c; /* Darker shade for hover */
+            --gray-100: #f8fafc;
+            --gray-200: #e9eef6;
+            --gray-300: #cbd5e1;
+            --gray-800: #1e293b;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--gray-100);
+            line-height: 1.6;
+            color: var(--gray-800);
+        }
+
+        .container {
+            max-width: 900px; /* Slightly narrower for better readability */
+            margin: 3rem auto 0; /* Remove bottom margin */
+            padding: 0 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--gray-800);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .developer-tag {
+            display: inline-block;
+            background: var(--gray-200);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--gray-800);
+            opacity: 0.8;
+            margin-top: 1rem;
+        }
+
+        .step-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .step-container:hover {
+            transform: translateY(-2px);
+        }
+
+        .step-title {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .spreadsheet-input {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        .spreadsheet-input th {
+            background: var(--gray-100);
+            padding: 1rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .spreadsheet-input td {
+            padding: 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .spreadsheet-input textarea {
+            width: 100%;
+            min-height: 35px;
+            padding: 1rem;
+            border: none;
+            resize: vertical;
+            font-size: 1rem;
+            line-height: 1.6;
+            font-family: inherit;
+            background: transparent;
+        }
+
+        .spreadsheet-input textarea:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(255, 53, 69, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(255, 53, 69, 0.3);
+        }
+
+        .format-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        #nameFormat {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--gray-300);
+            font-size: 0.95rem;
+        }
+
+        #suffix {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--gray-300);
+            font-size: 0.95rem;
+            width: 200px;
+        }
+
+        .suffix-btn {
+            background: white;
+            border: 1px solid var(--gray-300);
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .suffix-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--gray-100);
+        }
+
+        .preview {
+            background: var(--gray-100);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .preview-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-item .formatted {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+            background: var(--gray-800);
+            color: white;
+            width: 100%; /* Ensure full width */
+        }
+
+        .footer p {
+            color: var(--gray-200);
+            opacity: 0.9;
+            font-size: 0.95rem;
+            margin: 0.75rem 0;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .footer a:hover {
+            opacity: 1;
+            border-bottom-color: var(--primary);
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-divider {
+            width: 50px;
+            height: 2px;
+            background: var(--primary);
+            margin: 1rem auto;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 1rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gerador de CSV para Google Contatos</h1>
+            <p>Formate e prepare seus contatos para importação em massa no Google Contatos</p>
+            <span class="developer-tag">Desenvolvido por Ryan</span>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">
+                <span class="step-number">1</span>
+                <h2>Insira os números de telefone</h2>
+            </div>
+            <table class="spreadsheet-input">
+                <thead>
+                    <tr>
+                        <th>Telefones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <textarea id="phoneInput" rows="10" placeholder="Cole aqui os números de telefone do Excel"></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn" onclick="formatPhones()">Formatar Telefones</button>
+            <div class="preview" id="phonePreview"></div>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">
+                <span class="step-number">2</span>
+                <h2>Insira os nomes</h2>
+            </div>
+            <table class="spreadsheet-input">
+                <thead>
+                    <tr>
+                        <th>Nomes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <textarea id="nameInput" rows="10" placeholder="Cole aqui os nomes do Excel"></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="format-options">
+                <select id="nameFormat">
+                    <option value="normal">Formato Normal</option>
+                    <option value="upper">MAIÚSCULO</option>
+                    <option value="lower">minúsculo</option>
+                    <option value="title">Primeira Letra Maiúscula</option>
+                </select>
+                <input type="text" id="suffix" placeholder="Sufixo personalizado">
+                <div class="suffix-options">
+                    <button class="suffix-btn" onclick="setSuffix('MELI GCR')">MELI GCR</button>
+                </div>
+            </div>
+            <button class="btn" onclick="formatNames()">Formatar Nomes</button>
+            <div class="preview" id="namePreview"></div>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">
+                <span class="step-number">3</span>
+                <h2>Visualização e Download</h2>
+            </div>
+            <div class="preview" id="finalPreview"></div>
+            <button class="btn" onclick="generateCSV()">Baixar CSV</button>
+        </div>
+    </div>
+
+    <footer class="f">
+        <div class="notification">Copiado!</div>
+        
+        <div class="w">
+          <p class="t">Desenvolvido por Ryan <i class="fa-solid fa-mug-hot"></i></p>
+          
+          <div class="c">
+            <button class="copy-btn" data-value="ryanzera.dev@gmail.com">
+              <i class="fas fa-envelope"></i>ryanzera.dev@gmail.com
+            </button>
+            <button class="copy-btn" data-value="+5548984613946">
+              <i class="fas fa-phone-alt"></i>+55 (48) 98461-3946
+            </button>
+          </div>
+          
+          <div class="s">
+            <a href="https://www.instagram.com/euoryan/" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://github.com/euoryan" aria-label="GitHub">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/euoryan/" aria-label="LinkedIn">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </div>
+       
+          <div class="l">
+            <a href="https://euoryan.com/portaldomotorista/assets/pages/politicadeprivacidade.html" target="_blank">Política de Privacidade</a>
+            <span>•</span>
+            <a href="https://euoryan.com/portaldomotorista/assets/pages/termosdeuso.html" target="_blank">Termos de Uso</a>
+          </div>        
+       
+        <hr>
+        
+        <div class="w">
+          <div class="cp">
+            <small>© 2024 Todos os direitos reservados.</small>
+          </div>
+        </div>
+      
+        <style>
+          .f {
+            background: #111827;
+            color: #9CA3AF;
+            font: 14px Inter, sans-serif;
+            padding: 16px;
+            position: relative;
+          }
+          .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2e9aff;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: 0.3s;
+          }
+          .notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+          }
+          .w {
+            max-width: 1200px;
+            margin: auto;
+            text-align: center;
+          }
+          .t {
+            font-size: 14px;
+            margin: 0 0 16px;
+          }
+          .c {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 12px;
+          }
+          .s {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 12px;
+          }
+          .l {
+            font-size: 13px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 12px;
+          }
+          hr {
+            border: 0;
+            height: 1px;
+            background: rgba(156, 163, 175, 0.2);
+            margin: 12px 0;
+          }
+          .cp {
+            color: #6B7280;
+            font-size: 12px;
+          }
+          a, .copy-btn {
+            color: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+          }
+          .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font: inherit;
+            padding: 0;
+          }
+          i {
+            margin-right: 8px;
+          }
+          .fa-mug-hot {
+            color: #4791ff;
+            animation: b 1s infinite;
+            margin-left: 4px;
+            margin-right: 0;
+          }
+          a:hover, .copy-btn:hover {
+            color: #fff;
+          }
+          @keyframes b {
+            50% {transform: scale(1.1)}
+          }
+          @media(max-width: 640px) {
+            .c {
+              flex-direction: column;
+              gap: 8px;
+              align-items: center;
+            }
+          }
+        </style>
+      
+        <script>
+          const notification = document.querySelector('.notification');
+          let timeoutId;
+      
+          document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const text = btn.getAttribute('data-value');
+              await navigator.clipboard.writeText(text);
+              
+              // Limpa o timeout anterior se existir
+              if (timeoutId) clearTimeout(timeoutId);
+              
+              // Mostra a notificação
+              notification.classList.add('show');
+              
+              // Remove a notificação após 2 segundos
+              timeoutId = setTimeout(() => {
+                notification.classList.remove('show');
+              }, 2000);
+            });
+          });
+        </script>
+      </footer>
+
+    <script>
+        let formattedPhones = [];
+        let formattedNames = [];
+
+        function setSuffix(suffix) {
+            document.getElementById('suffix').value = suffix;
+        }
+
+        function formatPhones() {
+            const phones = document.getElementById('phoneInput').value.split('\n');
+            const previewDiv = document.getElementById('phonePreview');
+            previewDiv.innerHTML = '';
+            formattedPhones = [];
+
+            phones.forEach(phone => {
+                if (phone.trim()) {
+                    const formatted = phone.replace(/\D/g, '')
+                        .replace(/^(\d{2})(\d)/g, '+55$1$2')
+                        .replace(/^(\+55)0/, '$1');
+                    
+                    formattedPhones.push(formatted);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <span>Original: ${phone}</span>
+                        <span class="formatted">Formatado: ${formatted}</span>
+                    `;
+                    previewDiv.appendChild(div);
+                }
+            });
+            updateFinalPreview();
+        }
+
+        function formatNames() {
+            const names = document.getElementById('nameInput').value.split('\n');
+            const format = document.getElementById('nameFormat').value;
+            const suffix = document.getElementById('suffix').value;
+            const previewDiv = document.getElementById('namePreview');
+            previewDiv.innerHTML = '';
+            formattedNames = [];
+
+            names.forEach(name => {
+                if (name.trim()) {
+                    let formatted = name.trim();
+                    
+                    switch(format) {
+                        case 'upper':
+                            formatted = formatted.toUpperCase();
+                            break;
+                        case 'lower':
+                            formatted = formatted.toLowerCase();
+                            break;
+                        case 'title':
+                            formatted = formatted.split(' ')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                .join(' ');
+                            break;
+                    }
+
+                    if (suffix) {
+                        formatted += ` ${suffix}`;
+                    }
+
+                    formattedNames.push(formatted);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <span>Original: ${name}</span>
+                        <span class="formatted">Formatado: ${formatted}</span>
+                    `;
+                    previewDiv.appendChild(div);
+                }
+            });
+            updateFinalPreview();
+        }
+
+        function updateFinalPreview() {
+            const previewDiv = document.getElementById('finalPreview');
+            previewDiv.innerHTML = '';
+
+            const length = Math.max(formattedNames.length, formattedPhones.length);
+            
+            for (let i = 0; i < length; i++) {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <span>${formattedNames[i] || '(sem nome)'}</span>
+                    <span>${formattedPhones[i] || '(sem telefone)'}</span>
+                `;
+                previewDiv.appendChild(div);
+            }
+        }
+
+        function generateCSV() {
+            const csvData = [];
+            const length = Math.max(formattedNames.length, formattedPhones.length);
+
+            for (let i = 0; i < length; i++) {
+                csvData.push({
+                    Name: formattedNames[i] || '',
+                    Phone: formattedPhones[i] || ''
+                });
+            }
+
+            const csv = Papa.unparse(csvData);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'contatos_google.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function initializeTextareas() {
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeTextareas);
+    </script>
+</body></html>
