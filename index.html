@@ -1,369 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <title>Contatos CSV</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="assets/images/favicon/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="assets/images/favicon/favicon.ico" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <title>Gerador de CSV para Google Contatos</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-</head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #dc3545; /* New primary red color */
-            --primary-dark: #ba0b1c; /* Darker shade for hover */
-            --gray-100: #f8fafc;
-            --gray-200: #e9eef6;
-            --gray-300: #cbd5e1;
-            --gray-800: #1e293b;
-            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --bg-dark: #0d1117;
+            --bg-medium: #161b22;
+            --text-light: #c9d1d9;
+            --text-gray: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --btn-bg: #21262d;
+            --btn-hover: #30363d;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-
         body {
-            background: var(--gray-100);
-            line-height: 1.6;
-            color: var(--gray-800);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-
         .container {
-            max-width: 900px; /* Slightly narrower for better readability */
-            margin: 3rem auto 0; /* Remove bottom margin */
-            padding: 0 24px;
+            background-color: var(--bg-medium);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            max-width: 700px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 30px;
+            flex-grow: 1;
         }
-
-        .header {
+        h1 {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 3rem 2rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
         }
-
-        .header h1 {
-            font-size: 2.5rem;
-            letter-spacing: -0.5px;
-            margin-bottom: 1rem;
+        .section {
+            margin-bottom: 25px;
         }
-
-        .header p {
-            font-size: 1.1rem;
-            color: var(--gray-800);
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
+        h2 {
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
-
-        .developer-tag {
-            display: inline-block;
-            background: var(--gray-200);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--gray-800);
-            opacity: 0.8;
-            margin-top: 1rem;
-        }
-
-        .step-container {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s ease;
-        }
-
-        .step-container:hover {
-            transform: translateY(-2px);
-        }
-
-        .step-title {
-            color: var(--primary);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
-
-        .step-number {
-            background: var(--primary);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .spreadsheet-input {
+        textarea, input, select {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1.5rem;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--gray-200);
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
         }
-
-        .spreadsheet-input th {
-            background: var(--gray-100);
-            padding: 1rem;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            text-align: left;
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
-
-        .spreadsheet-input td {
-            padding: 0;
-            border: 1px solid var(--gray-200);
-        }
-
-        .spreadsheet-input textarea {
-            width: 100%;
-            min-height: 35px;
-            padding: 1rem;
-            border: none;
-            resize: vertical;
-            font-size: 1rem;
-            line-height: 1.6;
-            font-family: inherit;
-            background: transparent;
-        }
-
-        .spreadsheet-input textarea:focus {
-            outline: 2px solid var(--primary);
-            outline-offset: -2px;
-        }
-
         .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.875rem 1.75rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            box-shadow: 0 2px 4px rgba(255, 53, 69, 0.2);
-            transition: all 0.2s ease;
+            padding: 8px 16px;
+            background-color: var(--btn-bg);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
-
         .btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(255, 53, 69, 0.3);
+            background-color: var(--btn-hover);
         }
-
-        .format-options {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            align-items: center;
-        }
-
-        #nameFormat {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            border: 1px solid var(--gray-300);
-            font-size: 0.95rem;
-        }
-
-        #suffix {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            border: 1px solid var(--gray-300);
-            font-size: 0.95rem;
-            width: 200px;
-        }
-
-        .suffix-btn {
-            background: white;
-            border: 1px solid var(--gray-300);
-            padding: 0.5rem 1.25rem;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .suffix-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: var(--gray-100);
-        }
-
         .preview {
-            background: var(--gray-100);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 1.5rem;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 15px;
         }
-
         .preview-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--gray-200);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border-color);
         }
-
         .preview-item:last-child {
             border-bottom: none;
         }
-
-        .preview-item .formatted {
-            color: var(--primary);
-            font-weight: 500;
-        }
-
+        
+        /* Footer Styles */
         .footer {
-            text-align: center;
-            padding: 3rem 1rem;
-            margin-top: 4rem;
-            background: var(--gray-800);
-            color: white;
-            width: 100%; /* Ensure full width */
-        }
-
-        .footer p {
-            color: var(--gray-200);
-            opacity: 0.9;
-            font-size: 0.95rem;
-            margin: 0.75rem 0;
-            line-height: 1.6;
-        }
-
-        .footer a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border-bottom: 1px solid transparent;
-        }
-
-        .footer a:hover {
-            opacity: 1;
-            border-bottom-color: var(--primary);
-        }
-
-        .footer-content {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .footer-divider {
-            width: 50px;
-            height: 2px;
-            background: var(--primary);
-            margin: 1rem auto;
-            opacity: 0.5;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-                margin: 1rem auto;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Gerador de CSV para Google Contatos</h1>
-            <p>Formate e prepare seus contatos para importação em massa no Google Contatos</p>
-            <span class="developer-tag">Desenvolvido por Ryan</span>
-        </div>
-
-        <div class="step-container">
-            <div class="step-title">
-                <span class="step-number">1</span>
-                <h2>Insira os números de telefone</h2>
-            </div>
-            <table class="spreadsheet-input">
-                <thead>
-                    <tr>
-                        <th>Telefones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <textarea id="phoneInput" rows="10" placeholder="Cole aqui os números de telefone do Excel"></textarea>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <button class="btn" onclick="formatPhones()">Formatar Telefones</button>
-            <div class="preview" id="phonePreview"></div>
-        </div>
-
-        <div class="step-container">
-            <div class="step-title">
-                <span class="step-number">2</span>
-                <h2>Insira os nomes</h2>
-            </div>
-            <table class="spreadsheet-input">
-                <thead>
-                    <tr>
-                        <th>Nomes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <textarea id="nameInput" rows="10" placeholder="Cole aqui os nomes do Excel"></textarea>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="format-options">
-                <select id="nameFormat">
-                    <option value="normal">Formato Normal</option>
-                    <option value="upper">MAIÚSCULO</option>
-                    <option value="lower">minúsculo</option>
-                    <option value="title">Primeira Letra Maiúscula</option>
-                </select>
-                <input type="text" id="suffix" placeholder="Sufixo personalizado">
-                <div class="suffix-options">
-                    <button class="suffix-btn" onclick="setSuffix('| @MELIGCR')">| @MELIGCR</button>
-                </div>
-                <div class="suffix-options">
-                    <button class="suffix-btn" onclick="setSuffix('| @SVC')">| @SVC</button>
-                </div>
-                <div class="suffix-options">
-                    <button class="suffix-btn" onclick="setSuffix('| @SVC')">| @SVC</button>
-                </div>
-            </div>
-            <button class="btn" onclick="formatNames()">Formatar Nomes</button>
-            <div class="preview" id="namePreview"></div>
-        </div>
-
-        <div class="step-container">
-            <div class="step-title">
-                <span class="step-number">3</span>
-                <h2>Visualização e Download</h2>
-            </div>
-            <div class="preview" id="finalPreview"></div>
-            <button class="btn" onclick="generateCSV()">Baixar CSV</button>
-        </div>
-    </div>
-
-    <footer class="footer">
-        <style>
-          .footer {
             margin-top: auto;
             padding: 20px 0;
             font-size: 12px;
@@ -371,93 +110,139 @@
             border-top: 1px solid #30363d;
             background-color: #0d1117;
             text-align: center;
-          }
-      
-          .footer-container {
+        }
+        .footer-container {
             max-width: 1200px;
             margin: auto;
             padding: 0 16px;
             display: flex;
             flex-direction: column;
             gap: 16px;
-          }
-      
-          .footer-links,
-          .footer-icons {
+        }
+        .footer-links,
+        .footer-icons {
             display: flex;
             justify-content: center;
             gap: 16px;
-          }
-      
-          .footer-links a,
-          .footer-icons a {
+        }
+        .footer-links a,
+        .footer-icons a {
             color: #8b949e;
             text-decoration: none;
             transition: color 0.3s;
-          }
-      
-          .footer-links a:hover,
-          .footer-icons a:hover {
+        }
+        .footer-links a:hover,
+        .footer-icons a:hover {
             color: #ffffff;
-          }
-      
-          .footer-icons a {
+        }
+        .footer-icons a {
             font-size: 18px;
-          }
-      
-          .footer-rights {
+        }
+        .footer-rights {
             font-size: 12px;
             color: #8b949e;
-          }
-      
-          .footer-rights a {
+        }
+        .footer-rights a {
             color: #8b949e;
             font-weight: bold;
             text-decoration: none;
             transition: color 0.3s;
-          }
-      
-          .footer-rights a:hover {
+        }
+        .footer-rights a:hover {
             color: #ffffff;
-          }
-        </style>
-      
-        <div class="footer-container">
-          <!-- Links -->
-          <div class="footer-links">
-            <a href="https://euoryan.com/politicadeprivacidade.html" target="_blank">Política de Privacidade</a>
-            <a href="https://euoryan.com/termosdeuso.html" target="_blank">Termos de Uso</a>
-            <a href="https://euoryan.com/contato.html" target="_blank">Contato</a>
-          </div>
-      
-          <!-- Ícones -->
-          <div class="footer-icons">
-            <a href="https://www.instagram.com/euoryan" target="_blank" aria-label="Instagram">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://github.com/euoryan" target="_blank" aria-label="GitHub">
-              <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/euoryan" target="_blank" aria-label="LinkedIn">
-              <i class="fab fa-linkedin"></i>
-            </a>
-          </div>
-      
-          <!-- Direitos autorais -->
-          <div class="footer-rights">
-            <span>© 2024 por </span>
-            <a href="https://github.com/euoryan" target="_blank">Ryan</a>.
-            <span> Todos os direitos reservados.</span>
-          </div>
-        </div>
-      </footer>
+        }
 
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de CSV para Google Contatos</h1>
+
+        <div class="section">
+            <h2>1. Telefones</h2>
+            <textarea id="phoneInput" rows="5" placeholder="Cole aqui os números de telefone"></textarea>
+            <div class="btn-group">
+                <button class="btn" onclick="formatPhones()">Formatar Telefones</button>
+            </div>
+            <div id="phonePreview" class="preview"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Nomes</h2>
+            <textarea id="nameInput" rows="5" placeholder="Cole aqui os nomes"></textarea>
+            
+            <div class="btn-group">
+                <select id="nameFormat">
+                    <option value="normal">Formato Normal</option>
+                    <option value="upper">MAIÚSCULO</option>
+                    <option value="lower">minúsculo</option>
+                    <option value="title">Primeira Letra Maiúscula</option>
+                </select>
+                <input type="text" id="suffix" placeholder="Sufixo personalizado">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" onclick="addSuffix('| MELI GCR')">| MELI GCR</button>
+                <button class="btn" onclick="addSuffix('| @SVC')">| @SVC</button>
+                <button class="btn" onclick="formatNames()">Formatar Nomes</button>
+            </div>
+            <div id="namePreview" class="preview"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. Download</h2>
+            <div id="finalPreview" class="preview"></div>
+            <div class="btn-group">
+                <button class="btn" onclick="generateCSV()">Baixar CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="https://euoryan.com/politicadeprivacidade.html" target="_blank">Política de Privacidade</a>
+                <a href="https://euoryan.com/termosdeuso.html" target="_blank">Termos de Uso</a>
+                <a href="https://euoryan.com/contato.html" target="_blank">Contato</a>
+            </div>
+
+            <div class="footer-icons">
+                <a href="https://www.instagram.com/euoryan" target="_blank" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://github.com/euoryan" target="_blank" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/euoryan" target="_blank" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+
+            <div class="footer-rights">
+                <span>© 2024 por </span>
+                <a href="https://github.com/euoryan" target="_blank">Ryan</a>.
+                <span> Todos os direitos reservados.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
         let formattedPhones = [];
         let formattedNames = [];
 
-        function setSuffix(suffix) {
-            document.getElementById('suffix').value = suffix;
+        function addSuffix(suffix) {
+            const suffixInput = document.getElementById('suffix');
+            suffixInput.value = (suffixInput.value + ' ' + suffix).trim();
         }
 
         function formatPhones() {
@@ -478,7 +263,7 @@
                     div.className = 'preview-item';
                     div.innerHTML = `
                         <span>Original: ${phone}</span>
-                        <span class="formatted">Formatado: ${formatted}</span>
+                        <span style="color:#58a6ff;">Formatado: ${formatted}</span>
                     `;
                     previewDiv.appendChild(div);
                 }
@@ -522,7 +307,7 @@
                     div.className = 'preview-item';
                     div.innerHTML = `
                         <span>Original: ${name}</span>
-                        <span class="formatted">Formatado: ${formatted}</span>
+                        <span style="color:#58a6ff;">Formatado: ${formatted}</span>
                     `;
                     previewDiv.appendChild(div);
                 }
@@ -570,16 +355,6 @@
             link.click();
             document.body.removeChild(link);
         }
-
-        function initializeTextareas() {
-            document.querySelectorAll('textarea').forEach(textarea => {
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = (this.scrollHeight) + 'px';
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', initializeTextareas);
     </script>
-</body></html>
+</body>
+</html>
