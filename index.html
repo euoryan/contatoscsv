@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>euoryan // geradorcsv</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">euoryan // <span>gerador de csv</span></a>
+            <div class="nav-links">
+                <a href="#" class="active">Gerador CSV</a>
+                <a href="https://euoryan.com" target="_blank">Meu site</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Gerador de CSV para Contatos</h1>
+                <p>Formate facilmente seus contatos para importação no Google</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-phone"></i>
+                    <h2>Telefones</h2>
+                </div>
+                <div class="card-body">
+                    <textarea id="phoneInput" rows="4" placeholder="Cole aqui os números de telefone (um por linha)"></textarea>
+                    <button class="btn primary-btn" id="formatPhonesBtn">
+                        <i class="fas fa-check"></i> Formatar Telefones
+                    </button>
+                    <div id="phonePreview" class="preview"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user"></i>
+                    <h2>Nomes</h2>
+                </div>
+                <div class="card-body">
+                    <textarea id="nameInput" rows="4" placeholder="Cole aqui os nomes (um por linha)"></textarea>
+                    
+                    <div class="form-group">
+                        <select id="nameFormat">
+                            <option value="normal">Formato Normal</option>
+                            <option value="upper">MAIÚSCULO</option>
+                            <option value="lower">minúsculo</option>
+                            <option value="title">Primeira Letra Maiúscula</option>
+                        </select>
+                        <input type="text" id="suffix" placeholder="Sufixo personalizado">
+                    </div>
+
+                    <div class="btn-row">
+                        <button class="btn suffix-btn" data-suffix="| MELI GCR">+ MELI GCR</button>
+                        <button class="btn suffix-btn" data-suffix="| @SVC">+ @SVC</button>
+                        <button class="btn primary-btn" id="formatNamesBtn">
+                            <i class="fas fa-check"></i> Formatar Nomes
+                        </button>
+                    </div>
+                    <div id="namePreview" class="preview"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-file-download"></i>
+                    <h2>Download</h2>
+                </div>
+                <div class="card-body">
+                    <div id="finalPreview" class="preview final-preview"></div>
+                    <button class="btn download-btn" id="downloadBtn">
+                        <i class="fas fa-download"></i> Baixar CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="https://euoryan.com/politicadeprivacidade.html">Política de Privacidade</a>
+                <a href="https://euoryan.com/termosdeuso.html">Termos de Uso</a>
+                <a href="https://euoryan.com/contato.html">Contato</a>
+            </div>
+
+            <div class="footer-icons">
+                <a href="https://www.instagram.com/euoryan" target="_blank" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://github.com/euoryan" target="_blank" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/euoryan" target="_blank" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+
+            <div class="footer-rights">
+                <span>© 2024 por </span>
+                <a href="https://github.com/euoryan" target="_blank">Ryan</a>
+                <span>. Todos os direitos reservados.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
